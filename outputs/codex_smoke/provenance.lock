@@ -1,0 +1,42 @@
+generated_by: mdsynth v0.1.0
+generated_at: '2026-07-09T04:04:51.509963+00:00'
+user_request: ??300K?NPT??200ps
+target_lammps:
+  version: '20260330'
+  packages:
+  - KSPACE
+  - MANYBODY
+  mpi: true
+task_type: equilibration_npt
+material: copper
+crystal_structure: fcc
+lattice_constant: 3.615
+force_field_provenance:
+  family: eam
+  source: default_potential_for_copper
+  verification: verified
+  potential_files:
+  - Cu_u3.eam
+  elements_covered:
+  - Cu
+assumptions:
+- 使用 EAM 势函数描述原子间相互作用
+- 使用默认晶格常数生成初始结构
+- 使用 eam 势函数 (Cu_u3.eam) 描述 copper 原子间相互作用
+- 使用 fcc 晶格生成初始结构，晶格常数 3.615 Å
+limitations:
+- 默认系统尺寸可能引起尺寸效应
+- 默认系统尺寸 (~4000 atoms) 可能引起尺寸效应
+repair_actions: []
+num_atoms: 4000
+replication: !!python/tuple
+- 10
+- 10
+- 10
+num_stages: 2
+stage_ids:
+- min
+- equil
+validation_passed: true
+preflight_passed: true
+extra: {}

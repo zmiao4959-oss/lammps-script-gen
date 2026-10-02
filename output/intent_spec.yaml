@@ -1,0 +1,61 @@
+task_type: ''
+task_description: Perform NPT equilibration of Cu followed by uniaxial tension along
+  x-direction to 20% strain at 300K with strain rate 1e-5/ps and total simulation
+  time 200ps.
+extraction_confidence: medium
+material:
+  name: copper
+  material_class: metal
+  morphology: unspecified
+  crystal_structure: fcc
+  composition: {}
+  structure_source: generated
+target_properties:
+- name: stress-strain curve
+  priority: primary
+- name: mechanical properties (Young's modulus, yield stress)
+  priority: secondary
+temperature:
+  value: 300
+  unit: K
+  status: known
+  source: user
+pressure:
+  value: null
+  unit: null
+  status: unknown
+  source: ''
+deformation_axis: x
+deformation_mode: uniaxial_tension
+simulation_time:
+  value: null
+  unit: null
+  status: unknown
+  source: ''
+speed_vs_accuracy: balanced
+desired_outputs: []
+missing_blocking:
+- initial atomic configuration and simulation box dimensions
+- interatomic potential file or specification
+missing_defaultable:
+- NPT pressure
+- NPT equilibration time
+- output frequency and thermodynamic averaging settings
+assumptions:
+- NPT equilibration is performed at same temperature (300K) with default pressure
+  (1 atm or 0 bar)
+- Material is bulk Cu with perfect crystal structure
+- Standard EAM potential for Cu will be used
+- Initial structure can be generated (e.g., FCC lattice orientated appropriately)
+- 使用 eam 势函数 (Cu_u3.eam) 描述 copper 原子间相互作用
+- 使用 fcc 晶格生成初始结构，晶格常数 3.615 Å
+risk_flags:
+- 'Strain rate and simulation time inconsistency: 1e-5/ps for 200ps yields only 0.2%
+  strain, not 20%; user may have intended 1e-3/ps or longer time.'
+- 'Multi-step workflow requires careful integration: NPT equilibration conditions
+  may affect subsequent tension results.'
+- Potential system size effects if small simulation box is used.
+- 默认系统尺寸 (~4000 atoms) 可能引起尺寸效应
+template_match: false
+user_potential_path: null
+original_user_text: 模拟Cu的NPT平衡过程之后20%的拉伸过程，温度为300K，拉伸速率为1e-5/ps，拉伸方向为x轴，模拟时间为200ps

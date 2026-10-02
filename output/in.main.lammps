@@ -1,0 +1,46 @@
+# LAMMPS script for Cu NPT equilibration followed by 20% tensile deformation along x
+# Material: copper (fcc), lattice constant 3.615 Å
+# Temperature: 300 K, Pressure: 0 bar during equilibration
+# Deformation: 20% engineering strain in 200 ps
+# Note: strain rate is set to 0.001 /ps (0.2/200) to achieve 20% stretch.
+# If you prefer 1e-5 /ps, increase run to 2,000,000 steps (20,000 ps).
+
+units metal
+atom_style atomic
+boundary p p p
+
+variable T equal 300.0
+variable P equal 0.0
+
+# Lattice and region (10x10x10 fcc unit cells -> ~4000 atoms)
+lattice fcc 3.615
+region box block 0 36.15 0 36.15 0 36.15 units box
+create_box 1 box
+create_atoms 1 box
+
+# Interatomic potential (EAM for Cu)
+pair_style eam
+pair_coeff * * Cu_u3.eam
+
+# Initial velocities
+velocity all create ${T} 87287
+
+# ===== NPT Equilibration =====
+fix fxnpt all npt temp ${T} ${T} 0.1 iso ${P} ${P} 1.0
+thermo 1000
+thermo_style custom step temp pe ke etotal press vol lx ly lz density
+dump d1 all custom 500 dump.equil.lammpstrj id type x y z
+run 50000   # 50 ps equilibration
+
+unfix fxnpt
+undump d1
+reset_timestep 0
+
+# ===== 20% tensile deformation along x =====
+variable erate equal 0.001   # strain rate in 1/ps
+fix fxnvt all nvt temp ${T} ${T} 0.1
+fix fxdeform all deform 1 x erate ${erate} units box
+dump d2 all custom 500 dump.deform.lammpstrj id type x y z
+run 200000  # 200 ps -> 20% strain
+
+write_data final.data

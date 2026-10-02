@@ -1,0 +1,268 @@
+ir_version: 0.1.0
+source_intent_id: ''
+task_type: uniaxial_tension
+system:
+  material_name: iron
+  material_class: metal
+  structure:
+    source: generated
+    generator:
+      lattice_type: bcc
+      lattice_constant:
+        value: 2.866
+        unit: Å
+        dimension: length
+        source: default
+        confidence: high
+      replication: !!python/tuple
+      - 10
+      - 10
+      - 10
+    file_path: null
+    file_checksum: null
+  species:
+  - element: Fe
+    role: bulk_atom
+    mass:
+      value: 55.845
+      unit: g/mol
+      dimension: mass
+      source: default
+      confidence: high
+  total_atoms: 2000
+force_field:
+  family: eam
+  atom_style: atomic
+  pair_style: eam/fs
+  pair_style_args: []
+  potential_files:
+  - name: Fe_mm.eam.fs
+    source: builtin
+    checksum: null
+  elements_covered:
+  - Fe
+  verification_status: verified
+  provenance: default_potential_for_iron
+  notes:
+  - Default eam potential for iron
+cell:
+  boundary:
+    x: periodic
+    y: periodic
+    z: periodic
+  pressure_control_allowed:
+    x: true
+    y: true
+    z: true
+  deformation_allowed:
+    x: true
+    y: true
+    z: true
+groups:
+- id: all
+  selector_type: all
+  region: null
+  atom_types: null
+  subtract_groups: []
+  description: All atoms
+stages:
+- id: min
+  type: energy_minimization
+  ensemble: null
+  minimization:
+    energy_tolerance:
+      value: 1.0e-06
+      unit: dimensionless
+      dimension: dimensionless
+      source: default
+      confidence: medium
+    force_tolerance:
+      value: 1.0e-08
+      unit: eV/Å
+      dimension: force
+      source: default
+      confidence: medium
+    max_iterations: 10000
+    max_evaluations: 100000
+  deformation: null
+  duration: null
+  nsteps: null
+- id: equil
+  type: equilibration
+  ensemble:
+    type: npt
+    group: all
+    temperature:
+      value: 300.0
+      unit: K
+      dimension: temperature
+      source: default
+      confidence: medium
+    temperature_range: null
+    pressure_control:
+      x:
+        value: 0.0
+        unit: bar
+        dimension: pressure
+        source: default
+        confidence: medium
+      y:
+        value: 0.0
+        unit: bar
+        dimension: pressure
+        source: default
+        confidence: medium
+      z:
+        value: 0.0
+        unit: bar
+        dimension: pressure
+        source: default
+        confidence: medium
+    tdamp:
+      value: 0.1
+      unit: ps
+      dimension: time
+      source: default
+      confidence: medium
+    pdamp:
+      value: 1.0
+      unit: ps
+      dimension: time
+      source: default
+      confidence: medium
+  minimization: null
+  deformation: null
+  duration:
+    value: 100
+    unit: ps
+    dimension: time
+    source: default
+    confidence: medium
+  nsteps: 100000
+- id: loading
+  type: deformation
+  ensemble: null
+  minimization: null
+  deformation:
+    mode: uniaxial_tension
+    axis: x
+    strain_rate:
+      value: 100000000.0
+      unit: 1/s
+      dimension: strain_rate
+      source: default
+      confidence: medium
+    max_strain:
+      value: 0.2
+      unit: dimensionless
+      dimension: dimensionless
+      source: default
+      confidence: medium
+    thermostat:
+      type: nvt
+      group: all
+      temperature:
+        value: 300.0
+        unit: K
+        dimension: temperature
+        source: default
+        confidence: medium
+      temperature_range: null
+      pressure_control: null
+      tdamp:
+        value: 0.1
+        unit: ps
+        dimension: time
+        source: default
+        confidence: medium
+      pdamp: null
+  duration: null
+  nsteps: 0
+timestep:
+  value: 0.001
+  unit: ps
+  dimension: time
+  source: default
+  confidence: medium
+units: metal
+observables:
+- id: temperature
+  type: thermodynamic_scalar
+  scope: global
+  group: null
+  components: []
+- id: stress_tensor
+  type: tensor
+  scope: global
+  group: null
+  components: []
+- id: strain
+  type: tensor
+  scope: global
+  group: null
+  components: []
+- id: pressure
+  type: thermodynamic_scalar
+  scope: global
+  group: null
+  components: []
+outputs:
+  thermo:
+    interval: 100
+    fields:
+    - step
+    - temp
+    - pe
+    - ke
+    - etotal
+    - press
+    - vol
+    - lx
+    - ly
+    - lz
+    - pxx
+    - pyy
+    - pzz
+    - pxy
+    - pxz
+    - pyz
+  dump:
+    enabled: true
+    interval: 1000
+    fields:
+    - id
+    - type
+    - x
+    - y
+    - z
+    format: custom
+  restart: true
+  restart_interval: null
+analysis:
+- id: stress_strain_curve
+  type: stress_strain_curve
+  inputs:
+    obs_0: stress_tensor
+    obs_1: strain
+  outputs:
+  - stress_strain_curve
+  parameters: {}
+- id: youngs_modulus_fit
+  type: youngs_modulus_fit
+  inputs:
+    obs_0: stress_tensor
+    obs_1: strain
+  outputs:
+  - youngs_modulus_fit
+  parameters: {}
+assumptions:
+- bulk morphology
+- single crystal
+- room temperature (300K) if default used
+- deformation along x-axis if default used
+- zero pressure if default used
+- standard strain rate if default used
+- 使用 eam 势函数 (Fe_mm.eam) 描述 iron 原子间相互作用
+- 使用 bcc 晶格生成初始结构，晶格常数 2.866 Å
+provenance:
+  intent_task_type: uniaxial_tension

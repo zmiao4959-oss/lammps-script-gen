@@ -1,0 +1,25 @@
+{
+  "passed": true,
+  "script_compiles": true,
+  "num_atoms": 0,
+  "total_charge": 0.0,
+  "initial_energy_finite": false,
+  "initial_potential_energy": 0.0,
+  "initial_kinetic_energy": 0.0,
+  "maximum_initial_force": 0.0,
+  "force_finite": false,
+  "minimization_converged": false,
+  "final_energy": 0.0,
+  "final_force_max": 0.0,
+  "short_run_completed": false,
+  "temperature_stable": false,
+  "energy_drift_percent": 0.0,
+  "volume_change_percent": 0.0,
+  "lost_atoms": 0,
+  "nan_detected": false,
+  "error_messages": [],
+  "warning_messages": [
+    "Sandbox preflight skipped: LAMMPS Python module not installed. Install with: pip install lammps"
+  ],
+  "thermo_history": []
+}

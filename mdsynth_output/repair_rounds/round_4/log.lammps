@@ -1,0 +1,57 @@
+LAMMPS (22 Jul 2025 - Update 4)
+OMP_NUM_THREADS environment is not set. Defaulting to 1 thread.
+  using 1 OpenMP thread(s) per MPI task
+Loaded 1 plugins from C:\Users\35059\app\lammps\LAMMPS 64-bit 22Jul2025-MSMPI\plugins
+# LAMMPS input script for bicrystal Fe phase transformation simulation
+# Material: iron (Fe), bcc, lattice constant 2.866 Å
+
+# --------------------- Initialization ---------------------
+units metal
+atom_style atomic
+boundary p p p
+
+# --------------------- Simulation cell ---------------------
+region box block 0 100 0 20 0 20 units box
+create_box 1 box
+Created orthogonal box = (0 0 0) to (100 20 20)
+  1 by 1 by 1 MPI processor grid
+
+# --------------------- Left grain (x = 0 to 50) with [100] orientation ---------------------
+region left block 0 50 0 20 0 20 units box
+lattice bcc 2.866
+Lattice spacing in x,y,z = 2.866 2.866 2.866
+create_atoms 1 region left
+Created 1715 atoms
+  using lattice units in orthogonal box = (0 0 0) to (100 20 20)
+  create_atoms CPU = 0.000 seconds
+
+# --------------------- Right grain (x = 50 to 100) rotated 15° about z-axis ---------------------
+# cos(15°) = 0.9659258, sin(15°) = 0.2588190
+lattice custom 2.866   a1 0.9659258 0.2588190 0.0   a2 -0.2588190 0.9659258 0.0   a3 0.0 0.0 1.0   basis 0.0 0.0 0.0   basis 0.5 0.5 0.5
+Lattice spacing in x,y,z = 3.5101186 3.5101186 2.866
+region right block 50 100 0 20 0 20 units box
+create_atoms 1 region right
+Created 1701 atoms
+  using lattice units in orthogonal box = (0 0 0) to (100 20 20)
+  create_atoms CPU = 0.000 seconds
+
+# --------------------- Set mass (must be before delete_atoms) ---------------------
+mass 1 55.845
+
+# Remove overlapping atoms at the grain boundary
+delete_atoms overlap 0.5 all all
+System init for delete_atoms ...
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 0
+  ghost atom cutoff = 0
+  binsize = 100, bins = 1 1 1
+  1 neighbor lists, perpetual/occasional/extra = 0 1 0
+  (1) command delete_atoms, occasional
+      attributes: full, newton on
+      pair build: full/bin/atomonly
+      stencil: full/bin/3d
+      bin: standard
+ERROR: Delete_atoms requires a pair style be defined (src/delete_atoms.cpp:300)
+Last input line: delete_atoms overlap 0.5 all all

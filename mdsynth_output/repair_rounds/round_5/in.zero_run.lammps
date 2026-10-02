@@ -1,0 +1,54 @@
+# LAMMPS input script for bicrystal Fe phase transformation simulation
+# Material: iron (Fe), bcc, lattice constant 2.866 Å
+
+# --------------------- Initialization ---------------------
+units metal
+atom_style atomic
+boundary p p p
+
+# --------------------- Simulation cell ---------------------
+region box block 0 100 0 20 0 20 units box
+create_box 1 box
+
+# --------------------- Left grain (x = 0 to 50) with [100] orientation ---------------------
+region left block 0 50 0 20 0 20 units box
+lattice bcc 2.866
+create_atoms 1 region left
+
+# --------------------- Right grain (x = 50 to 100) rotated 15° about z-axis ---------------------
+# cos(15°) = 0.9659258, sin(15°) = 0.2588190
+lattice custom 2.866 &
+  a1 0.9659258 0.2588190 0.0 &
+  a2 -0.2588190 0.9659258 0.0 &
+  a3 0.0 0.0 1.0 &
+  basis 0.0 0.0 0.0 &
+  basis 0.5 0.5 0.5
+region right block 50 100 0 20 0 20 units box
+create_atoms 1 region right
+
+# --------------------- Set mass ---------------------
+mass 1 55.845
+
+# --------------------- Interatomic potential (must precede delete_atoms overlap) ---------------------
+pair_style eam
+pair_coeff * * Fe_mm.eam.fs
+
+# Remove overlapping atoms at the grain boundary
+delete_atoms overlap 0.5 all all
+
+# --------------------- Initial velocities and energy minimization ---------------------
+velocity all create 300.0 12345
+minimize 1.0e-6 1.0e-8 10000 100000
+
+# --------------------- Output settings ---------------------
+thermo 100
+thermo_style custom step temp pe ke etotal press vol lx ly lz density
+dump d1 all custom 1000 dump.bicrystal_Fe.lammpstrj id type x y z
+
+# --------------------- Phase transition via NPT heating ---------------------
+variable T0 equal 300.0
+variable T1 equal 1200.0
+variable P equal 0.0
+fix fxnpt all npt temp ${T0} ${T1} 0.1 iso ${P} ${P} 1.0
+
+run 0

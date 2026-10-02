@@ -1,0 +1,43 @@
+task_type: equilibration_npt
+task_description: Mock extracted task
+extraction_confidence: high
+material:
+  name: copper
+  material_class: metal
+  morphology: bulk
+  crystal_structure: fcc
+  composition: {}
+  structure_source: generated
+target_properties: []
+temperature:
+  value: 300.0
+  unit: K
+  status: known
+  source: user
+pressure:
+  value: 0.0
+  unit: bar
+  status: unknown
+  source: ''
+deformation_axis: null
+deformation_mode: null
+simulation_time:
+  value: null
+  unit: null
+  status: unknown
+  source: ''
+speed_vs_accuracy: balanced
+desired_outputs: []
+missing_blocking: []
+missing_defaultable:
+- pressure
+- simulation_time
+assumptions:
+- 使用 EAM 势函数描述原子间相互作用
+- 使用默认晶格常数生成初始结构
+- 使用 eam 势函数 (Cu_u3.eam) 描述 copper 原子间相互作用
+- 使用 fcc 晶格生成初始结构，晶格常数 3.615 Å
+risk_flags:
+- 默认系统尺寸可能引起尺寸效应
+- 默认系统尺寸 (~4000 atoms) 可能引起尺寸效应
+original_user_text: ??300K?NPT??200ps
